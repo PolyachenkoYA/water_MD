@@ -1,0 +1,2 @@
+https://www.researchgate.net/post/How_to_simulate_the_NPT_of_SPC_E_water_model_in_LAMMPS
+http://www.orsi.sems.qmul.ac.uk/downloads.html

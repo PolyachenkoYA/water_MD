@@ -1,0 +1,120 @@
+# Reference: M. Orsi, Comparative assessment of the ELBA coarse-grained
+# model for water, Molecular Physics (2014), 112, 1566-1576
+
+log wat.log
+
+variable systemNsize equal 10
+variable rndSeed equal 1234
+
+units real
+    # grams/mole, A, fs, Kcal/mole, K, atm, g/cm^3
+atom_style full
+read_data SPCE.data
+include SPCE.forcefield
+
+replicate ${systemNsize} ${systemNsize} ${systemNsize}
+
+variable Nrun equal 1000
+variable Nfreq equal ${Nrun}/50
+    # calculate averages every this many timesteps
+variable Nevery equal 10
+    # Use input values every this many timesteps.
+    # This one shouldn't be less than memory time so averaged measures are independent
+variable Nrepeat equal ${Nfreq}/${Nevery}
+    # N of times to use input values for calculating averages
+    # e.g.
+    # Nevery=2, Nrepeat=6, and Nfreq=100:
+    # av1 = mean(90,92,94,96,98,100)
+    # av2 = mean(190,192,194,196,198,200)
+    # ...
+variable Ndump equal 10
+#variable Nr_rdf equal 0.5*${Nrun}/${Nevery}
+
+variable watMoleMass equal 18.0153 # /(g/mol)
+variable nAvog equal 6.0221415e23 # Avogadro's number
+variable watMoleculeMass equal (${watMoleMass}/${nAvog}) # /(g/molecule)
+variable A3_in_cm3 equal 1e-24 # Angstrom^3 in cm^3
+variable nAtoms equal atoms
+variable nMolecules equal v_nAtoms/3
+
+variable Text equal 298.0
+variable Pext equal 1.0
+
+group hydrogen type 1
+group oxygen type 2
+    # Identify a collection of atoms as belonging to a group. The group ID can then be used in other commands
+
+velocity all create ${Text} ${rndSeed}
+
+neighbor 2.0 bin
+    # skin = extra distance beyond force cutoff
+    # style (bin) - algorithm to build the list
+neigh_modify every 1 delay 0 check yes
+    # build neighbor list every ${every} steps
+    # don't build new list until at least ${delay} steps after the previous build
+    # If the ${check} setting is yes, then the every and delay settings determine when a build may possibly be performed, but an actual build only occurs if some atom has moved more than half the skin distance (specified in the neighbor command) since the last build.
+
+timestep 2.0 # fs
+
+fix constrain all shake 1.0e-4 100 0 b 1 a 1
+    # fix ID group-ID shake tol iter N constraint1 value1 ...
+    # iter - max # of iterations in each SHAKE solution
+    # print SHAKE statistics every N many timesteps (0 = never)
+    # b - bonds, a - angles
+    # b 1 - bonds of type 1
+    # a 1 - bonds of type 1
+    # shake adds forces to make the displacement satisfy constraints - e.g. |r_ij|=d
+    # rattle does the same and additionally it refines velocities - e.g. (|r|)'_t = 0.
+    # *should be defined after other force- and v- modifiers since it doesn't account for them
+
+fix integrate all npt temp ${Text} ${Text} 100.0 iso ${Pext} ${Pext} 1000.0
+    # Tstart,Tstop = external temperature at start/end of run
+    # Tdamp = temperature damping parameter (time units)
+    # temp - for thermostat, iso - for barostat
+fix removeMomentum all momentum 1 linear 1 1 1
+    # 1 - adjust the momentum every 1 timesteps
+    # linear 1/0 1/0 1/0 - zero the P_x/y/z
+    # angular - zero angular momentum (TODO - add "angular" here?)
+    # scale - scale velocities after the adjustment so T is conserved (TODO - add "scale" here?)
+
+compute T all temp
+    # Ke = 3/2 NkT
+    # kinetic tensor needed for pressure is computed here
+    # accounts for constrained degrees of freedom
+fix TempAve all ave/time ${Nevery} ${Nrepeat} ${Nfreq} c_T
+    # c_computeID
+
+variable P equal press
+    # It will be evaluated every time when the variable is used instead.
+fix PressAve all ave/time ${Nevery} ${Nrepeat} ${Nfreq} v_P
+    # v_variableName
+
+compute PE all pe pair kspace
+    # compute long-rage potential energy only (TODO - sum all potential energies?)
+variable PE_Mol equal c_PE/v_nMolecules
+    # average PE per molecule
+fix PEAve_Mol all ave/time ${Nevery} ${Nrepeat} ${Nfreq} v_PE_Mol
+
+variable Dens equal v_nMolecules*${watMoleculeMass}/(vol*${A3_in_cm3})
+fix DensAve all ave/time ${Nevery} ${Nrepeat} ${Nfreq} v_Dens file wat.dens
+    # write averaged dens to the file "wat.dens"
+
+compute	msd oxygen msd com yes
+    # msd of a molecule
+    # com=yes - substract center of mass drift
+fix msd oxygen ave/time 1 1 500 c_msd[4] file wat.msd
+
+#compute rdf all rdf 1000 2 2 # oxygen-oxygen
+#fix rdf all ave/time ${Nevery} ${Nr_rdf} ${Nrun} c_rdf file wat.rdf mode vector
+
+thermo_style custom step temp f_TempAve press f_PressAve f_PEAve_Mol f_DensAve
+    # f_fixID
+thermo_modify flush yes
+    # insures the output is dumped in the file and not buffered or something
+thermo ${Nfreq}
+
+dump trj all atom ${Ndump} wat.lammpstrj
+
+run ${Nrun}
+
+#write_restart wat.restart
