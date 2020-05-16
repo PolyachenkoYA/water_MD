@@ -71,24 +71,32 @@ P_av = np.mean(P)
 d_P_av = np.std(P) * stat_Q
 s_H = np.std(H)
 Cp = s_H**2 / (k_B * T_av**2)
+s_E = np.std(Etot)
+Cv = s_E**2 / (k_B * T_av**2)
 
-fig,ax = my.get_fig('$time (ps)$', r'$E_{tot} (Mcal/mol)$', r'$E_{tot}(t)$')
+fig,ax = my.get_fig('$time (ps)$', r'$E_{tot} (Mcal/mol)$', r'$E_{tot}(t); C_v = ' + my.f2str(Cv / mass_tot / 1e3) + ' (KJ/K/kg)$')
 ax.plot(t * s2ps, Etot / Kcal2Jmol / 1e3)
+plt.savefig('E.svg')
 
 fig,ax = my.get_fig('$time (ps)$', r'$\rho (g/cm^3)$', r'$\rho(t); \rho = ' + my.f2str(dens_av / gcm3_2_kgm3) + ' \pm ' + my.f2str(d_dens_av / gcm3_2_kgm3) + '$')
 ax.plot(t * s2ps, dens / gcm3_2_kgm3)
+plt.savefig('rho.svg')
 
 fig,ax = my.get_fig('$time (ps)$', r'$P (atm)$', r'$P(t); P = ' + my.f2str(P_av / atm2Pa) + ' \pm ' + my.f2str(d_P_av / atm2Pa) + '$')
 ax.plot(t * s2ps, P / atm2Pa)
+plt.savefig('P.svg')
 
 #fig,ax = my.get_fig('$time (ps)$', r'$V (nm^3)$', r'$V(t)$')
 #ax.plot(t * fs2ps, V*1e27)
+#plt.savefig('V.svg')
 
 fig,ax = my.get_fig('$time (ps)$', r'$T (K)$', r'$T(t); T = ' + my.f2str(T_av) + ' \pm ' + my.f2str(d_T_av) + '$')
 ax.plot(t * s2ps, T)
+plt.savefig('T.svg')
 
 fig,ax = my.get_fig('$time (ps)$', r'$H (Mcal/mol)$', r'$H(t); C_p = ' + my.f2str(Cp / mass_tot / 1e3) + ' (KJ/K/kg)$')
 ax.plot(t * s2ps, H / Kcal2Jmol / 1e3)
+plt.savefig('H.svg')
 
 plt.show()
 

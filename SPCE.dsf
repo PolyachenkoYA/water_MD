@@ -4,7 +4,7 @@
 mass 1 1.00794 # H
 mass 2 15.9994 # O
 
-pair_style lj/cut/coul/long 10.0
+pair_style lj/cut/coul/dsf 0.05 10.0
     # LJ_Rcut (Coul_Rcut)
 pair_modify tail yes
     # assumtions and approximations:
