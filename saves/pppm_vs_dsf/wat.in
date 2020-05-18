@@ -3,10 +3,10 @@
 
 log wat.log
 
-variable systemNsize equal 10
+variable systemNsize equal 15
 variable rndSeed equal 1234
 variable Nrun equal 500000
-variable Nstab equal 5000
+variable Nstab equal 2000
 variable NdumpStats equal 10
 variable NdumpFrames equal 1000
 variable Text equal 298.0
