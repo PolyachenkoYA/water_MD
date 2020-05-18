@@ -52,8 +52,8 @@ unfix stab_iso
 unfix stab_constrain
 
 reset_timestep 0
-fix iso all npt temp ${Text} ${Text} $(100.0*dt) iso ${Pext} ${Pext} $(1000.0*dt)
-#fix iso all nvt temp ${Text} ${Text} $(100.0*dt)
+#fix iso all npt temp ${Text} ${Text} $(100.0*dt) iso ${Pext} ${Pext} $(1000.0*dt)
+fix iso all nvt temp ${Text} ${Text} $(100.0*dt)
 fix constrain all rattle 1.0e-5 100 0 b 1 a 1
 
 thermo_style custom step density etotal press temp
