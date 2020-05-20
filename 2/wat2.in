@@ -15,11 +15,11 @@ variable Pext equal 1.0
 units real
     # g/mol, A, fs, Kcal/mol, K, atm, g/cm^3
 atom_style full
-read_data SPCE.data
+read_data SPCE2.data
 
 replicate ${systemNsize} ${systemNsize} ${systemNsize}
 
-include SPCE.pot
+include SPCE2.pot
 
 velocity all create ${Text} ${rndSeed}
 

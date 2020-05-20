@@ -4,20 +4,9 @@ import os, sys
 import matplotlib.pyplot as plt
 import mylib as my
 
+filename = 'wat.log'
 start_str = r'Step Density TotEng Press Temp'
 end_str = r'Loop time of'
-pic_ext = 'eps'
-
-args = sys.argv[1:]
-if(len(args) == 0):
-	print('format:\n' + sys.argv[0] + ' model_name')
-	exit(1)
-model_name = args[0]
-if(model_name == '.'):
-	model_name = ''
-	filename = 'wat.log'
-else:
-	filename = 'wat.log.' + model_name
 
 # ================= parse log file ===================
 
@@ -87,27 +76,27 @@ Cv = s_E**2 / (k_B * T_av**2)
 
 fig,ax = my.get_fig('$time (ps)$', r'$E_{tot} (Mcal/mol)$', r'$E_{tot}(t); C_v = ' + my.f2str(Cv / mass_tot / 1e3) + ' (KJ/K/kg)$')
 ax.plot(t * s2ps, Etot / Kcal2Jmol / 1e3)
-plt.savefig(model_name + 'E.' + pic_ext)
+plt.savefig('E.svg')
 
 fig,ax = my.get_fig('$time (ps)$', r'$\rho (g/cm^3)$', r'$\rho(t); \rho = ' + my.f2str(dens_av / gcm3_2_kgm3) + ' \pm ' + my.f2str(d_dens_av / gcm3_2_kgm3) + '$')
 ax.plot(t * s2ps, dens / gcm3_2_kgm3)
-plt.savefig(model_name + 'rho.' + pic_ext)
+plt.savefig('rho.svg')
 
 fig,ax = my.get_fig('$time (ps)$', r'$P (atm)$', r'$P(t); P = ' + my.f2str(P_av / atm2Pa) + ' \pm ' + my.f2str(d_P_av / atm2Pa) + '$')
 ax.plot(t * s2ps, P / atm2Pa)
-plt.savefig(model_name + 'P.' + pic_ext)
+plt.savefig('P.svg')
 
 #fig,ax = my.get_fig('$time (ps)$', r'$V (nm^3)$', r'$V(t)$')
 #ax.plot(t * fs2ps, V*1e27)
-#plt.savefig(model_name + 'V.' + pic_ext)
+#plt.savefig('V.svg')
 
 fig,ax = my.get_fig('$time (ps)$', r'$T (K)$', r'$T(t); T = ' + my.f2str(T_av) + ' \pm ' + my.f2str(d_T_av) + '$')
 ax.plot(t * s2ps, T)
-plt.savefig(model_name + 'T.' + pic_ext)
+plt.savefig('T.svg')
 
 fig,ax = my.get_fig('$time (ps)$', r'$H (Mcal/mol)$', r'$H(t); C_p = ' + my.f2str(Cp / mass_tot / 1e3) + ' (KJ/K/kg)$')
 ax.plot(t * s2ps, H / Kcal2Jmol / 1e3)
-plt.savefig(model_name + 'H.' + pic_ext)
+plt.savefig('H.svg')
 
 plt.show()
 

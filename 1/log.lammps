@@ -1,0 +1,7 @@
+LAMMPS (3 Mar 2020)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:94)
+  using 1 OpenMP thread(s) per MPI task
+# Reference: M. Orsi, Comparative assessment of the ELBA coarse-grained
+# model for water, Molecular Physics (2014), 112, 1566-1576
+
+log wat1.log

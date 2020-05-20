@@ -1,9 +1,9 @@
 # Reference: M. Orsi, Comparative assessment of the ELBA coarse-grained
 # model for water, Molecular Physics (2014), 112, 1566-1576
 
-log wat.log
+log wat1.log
 
-variable systemNsize equal 5
+variable systemNsize equal 10
 variable rndSeed equal 1234
 variable Nrun equal 500000
 variable Nstab equal 5000
@@ -15,11 +15,11 @@ variable Pext equal 1.0
 units real
     # g/mol, A, fs, Kcal/mol, K, atm, g/cm^3
 atom_style full
-read_data SPCE.data
+read_data SPCE1.data
 
 replicate ${systemNsize} ${systemNsize} ${systemNsize}
 
-include SPCE.pot
+include SPCE1.pot
 
 velocity all create ${Text} ${rndSeed}
 
