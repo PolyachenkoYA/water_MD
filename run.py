@@ -4,10 +4,20 @@ import os, sys
 import matplotlib.pyplot as plt
 import mylib as my
 
+
+"""
+This is test command
+"""
+print("Hello there...")
+"""
+"""
+
 start_str = r'Step Density TotEng Press Temp'
 end_str = r'Loop time of'
 pic_ext = 'eps'
-
+"""
+This is test comment.
+"""
 args = sys.argv[1:]
 if(len(args) == 0):
 	print('format:\n' + sys.argv[0] + ' model_name')
@@ -75,7 +85,6 @@ nu = N_molecules / Na
 mass_tot = mu * nu    #  kg
 V = mass_tot / dens   #  m^3
 H = Etot + P*V
-
 T_av = np.mean(T)
 d_T_av = np.std(T) * stat_Q
 P_av = np.mean(P)
